@@ -1,0 +1,181 @@
+'*****************************Creating equations******************************
+　
+genr time= @trend
+genr time2=time*time
+genr oilf2=oilf * oilf
+　
+smpl 2010m01 2017m12
+equation eqn_food.ls food  c  ar(1)
+　
+smpl 2000m12 2017m12
+equation eqn_educ.ls d(education) c  ar(1) 
+　
+smpl 2000m12 2017m12
+equation eqn_alco.ls alcohol_bev_tobacco c time ar(1)
+　
+smpl 2000m12 2017m12
+equation eqn_tran.ls transport c time  ar(1)
+　
+smpl 2000m12 2017m12
+equation eqn_recr.ls recr_culture c time time2 ar(1) ma(1) 
+　
+smpl 2000m12 2017m12
+equation eqn_com.ls communications c time2 ar(1) ma(1)
+　
+smpl 2000m12 2017m12
+equation eqn_misc.ls misc_goods_services c time time2 ar(1)
+　
+smpl 2000m12 2017m12
+equation eqn_cloth.ls clothing_footwear c time time2 ar(2) ma(1) 
+　
+smpl 2000m12 2017m12
+equation eqn_housop.ls hous_operation c time time2 ar(2) ma(1)
+　
+smpl 2008m1 2017m12
+equation eqn_health.ls health c time ar(2) time2
+　
+smpl 2000m12 2017m12
+equation eqn_hotel.ls rest_hotels c time ar(1) 
+　
+smpl 2000m12 2017m12
+equation eqn_hous.ls housing housing(-1) ar(1)
+　
+smpl 2000m12 2017m12
+equation eqn_nonalco.ls nonalco c time ar(1)
+　
+smpl 2000m12 2017m12
+equation eqn_gasol.ls gasol_diesel c oilf oilf2
+　
+'component 'gasoline and diesel, electricity and water are forecasted manually.
+　
+'****************Second part of the model - forecasting**********************
+　
+smpl 2016m09 2017m12
+　
+eqn_alco.forecast alcof alcose
+group al alcof (alcof+alcose) (alcof-alcose)
+al.line
+　
+eqn_cloth.forecast clothf clothse
+group cl clothf (clothf+clothse) (clothf-clothse)
+cl.line
+　
+eqn_com.forecast comf comse
+group co comf (comf+comse) (comf-comse)
+co.line
+　
+eqn_educ.forecast educf educse
+group ed educf (educf+educse) (educf-educse)
+ed.line
+　
+eqn_food.forecast foodf foodse
+group fo foodf (foodf+foodse) (foodf-foodse)
+fo.line
+　
+eqn_health.forecast healthf healthse
+group he healthf (healthf+healthse) (healthf-healthse)
+he.line
+　
+eqn_hotel.forecast hotelf hotelse
+group ho hotelf (hotelf+hotelse) (hotelf-hotelse)
+ho.line
+　
+eqn_housop.forecast housopf housopse
+group ho1 housopf (housopf+housopse) (housopf-housopse)
+ho1.line
+　
+eqn_hous.forecast housf housse
+group ho2 housf (housf+housse) (housf-housse)
+ho2.line
+　
+eqn_misc.forecast miscf miscse
+group mi miscf (miscf+miscse) (miscf-miscse)
+mi.line
+　
+eqn_recr.forecast recrf recrse
+group re recrf (recrf+recrse) (recrf-recrse)
+re.line
+　
+eqn_tran.forecast tranf transe
+group tr tranf (tranf+transe) (tranf-transe)
+tr.line
+　
+eqn_nonalco.forecast nonalcof nonalcose
+group nal nonalcof (nonalcof+nonalcose) (nonalcof-nonalcose)
+nal.line
+　
+eqn_gasol.forecast gasolf gasolse
+group gas gasolf (gasolf+gasolse) (gasolf-gasolse)
+gas.line
+　
+smpl 2000m12 2017m12
+　
+'********************grouping**************************
+　
+' weights per component, according to the component excel file. 
+vector(15) weights
+weights.fill  1125.3, 81.9, 625.9, 1394.8, 741.3, 235.8, 1263.0, 706.3, 891.2, 83.0, 373.7, 767.0, 552.3, 437.3, 721.0
+　
+model stif
+　
+stif.append composite = (weights(1)*foodf + weights(2)*alcof + weights(3)*clothf + weights(4)*housf + weights(5)*housopf + weights(6)*healthf + weights(7)*tranf + weights(8)*comf + weights(9)*recrf + weights(10)*educf + weights(11)*hotelf + weights(12)*miscf+ weights(13)*gasolf+weights(14)*waterf+weights(15)*electricityf)/10000
+　
+smpl 2000m01 2017m12
+stif.solve
+　
+　
+'****************creating 12 month series****************
+'oil 
+genr oil_12month =@movav(oil,12)
+genr oilf_12month =@movav(oilf,12)
+　
+'headline inflation
+genr inflationf_12month =(@movav(composite_0,12)-@movav(composite_0(-12),12))/@movav(composite_0(-12),12)*100
+genr official_12month =(@movav(official,12)-@movav(official(-12),12))/@movav(official(-12),12)*100
+　
+'component 12-month inflation
+genr WA_foodf_12m = (((@movav(foodf,12)-@movav(foodf(-12),12))/@movav(foodf(-12),12)))*(weights(1)/10000)*100
+　
+genr WA_alcof_12m = (((@movav(alcof,12)-@movav(alcof(-12),12))/@movav(alcof(-12),12)))*(weights(2)/10000) *100
+　
+genr WA_clothf_12m = (((@movav(clothf,12)-@movav(clothf(-12),12))/@movav(clothf(-12),12)))*(weights(3)/10000) *100
+　
+genr WA_housf_12m = (((@movav(housf,12)-@movav(housf(-12),12))/@movav(housf(-12),12)))*(weights(4)/10000)*100
+　
+genr WA_housopf_12m = (((@movav(housopf,12)-@movav(housopf(-12),12))/@movav(housopf(-12),12)))*(weights(5)/10000)*100
+　
+genr WA_healthf_12m = (((@movav(healthf,12)-@movav(healthf(-12),12))/@movav(healthf(-12),12)))*(weights(6)/10000)*100
+　
+genr WA_tranf_12m = (((@movav(tranf,12)-@movav(tranf(-12),12))/@movav(tranf(-12),12)))*(weights(7)/10000)*100
+　
+genr WA_comf_12m = (((@movav(comf,12)-@movav(comf(-12),12))/@movav(comf(-12),12)))*(weights(8)/10000)*100
+　
+genr WA_recrf_12m = (((@movav(recrf,12)-@movav(recrf(-12),12))/@movav(recrf(-12),12)))*(weights(9)/10000)*100
+　
+genr WA_educf_12m = (((@movav(educf,12)-@movav(educf(-12),12))/@movav(educf(-12),12)))*(weights(10)/10000)*100
+　
+genr WA_hotelf_12m = (((@movav(hotelf,12)-@movav(hotelf(-12),12))/@movav(hotelf(-12),12)))*(weights(11)/10000)*100
+　
+genr WA_miscf_12m = (((@movav(miscf,12)-@movav(miscf(-12),12))/@movav(miscf(-12),12)))*(weights(12)/10000)*100
+　
+genr WA_gasolf_12m = (((@movav(gasolf,12)-@movav(gasolf(-12),12))/@movav(gasolf(-12),12)))*(weights(13)/10000)*100
+　
+genr WA_waterf_12m = (((@movav(waterf,12)-@movav(waterf(-12),12))/@movav(waterf(-12),12)))*(weights(14)/10000)*100
+　
+genr WA_electricityf_12m = (((@movav(electricityf,12)-@movav(electricityf(-12),12))/@movav(electricityf(-12),12)))*(weights(15)/10000)*100
+　
+　
+'aggregate
+genr WA_total_12m = (WA_foodf_12m +WA_alcof_12m + WA_clothf_12m + WA_housf_12m + WA_housopf_12m + WA_healthf_12m + WA_tranf_12m + WA_comf_12m + WA_recrf_12m + WA_educf_12m +WA_hotelf_12m + WA_miscf_12m + WA_gasolf_12m + WA_waterf_12m + WA_electricityf_12m)
+　
+genr WA_energyf_12m = WA_gasolf_12m + WA_waterf_12m + WA_electricityf_12m
+　
+genr WA_coref_12m = WA_alcof_12m + WA_clothf_12m + WA_housf_12m + WA_housopf_12m + WA_healthf_12m + WA_tranf_12m + WA_comf_12m + WA_recrf_12m + WA_educf_12m +WA_hotelf_12m + WA_miscf_12m
+　
+　
+group core_elements WA_alcof_12m WA_clothf_12m WA_housf_12m WA_housopf_12m WA_healthf_12m WA_tranf_12m WA_comf_12m WA_recrf_12m WA_educf_12m WA_hotelf_12m WA_miscf_12m
+core_elements.line
+　
+STOP
+　
+　

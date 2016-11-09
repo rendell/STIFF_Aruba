@@ -22,7 +22,11 @@ Within this file, it is possible to construct the following components:
 (14) Water 
 (15) Electricity 
 
-Further methodological reference  
+In essence, most variables are forecast using ARIMA.
+Water and electricity are forecasted exogenously based on information gathered through comversations with officials of the water and electricity companies.
+Gasoline is forecasted through OLS with the independent variable beeing Brent oil price forecasts.
+
+Further methodological reference consult the Bank of England STIFF model manuals.
 
 
  

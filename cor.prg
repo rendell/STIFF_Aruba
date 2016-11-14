@@ -175,7 +175,28 @@ genr WA_coref_12m = WA_alcof_12m + WA_clothf_12m + WA_housf_12m + WA_housopf_12m
 　
 group core_elements WA_alcof_12m WA_clothf_12m WA_housf_12m WA_housopf_12m WA_healthf_12m WA_tranf_12m WA_comf_12m WA_recrf_12m WA_educf_12m WA_hotelf_12m WA_miscf_12m
 core_elements.line
+
+' generate end of period forecasts
+genr endperiod_alcof = (alcof - alcof(-12)) / alcof(-12)*100
+genr endperiod_clothf = (clothf - clothf(-12)) / clothf(-12)*100
+genr endperiod_housf= (housf- housf(-12)) / housf(-12)*100
+genr endperiod_housopf = (housopf - housopf(-12)) / housopf(-12)*100
+genr endperiod_healthf = (healthf - healthf(-12)) / healthf(-12)*100
+genr endperiod_tranf = (tranf - tranf(-12)) / tranf(-12)*100
+genr endperiod_comf = (comf - comf(-12)) / comf(-12)*100
+genr endperiod_recrf = (recrf - recrf(-12)) / recrf(-12)*100
+genr endperiod_educf= (educf - educf(-12)) / educf(-12)*100
+genr endperiod_hotelf= (hotelf- hotelf(-12)) / hotelf(-12)*100
+genr endperiod_miscf = (miscf - miscf(-12)) / miscf(-12)*100
+genr endperiod_foodf= (foodf - foodf(-12)) / foodf(-12)*100
+genr endperiod_gasolf = (gasolf - gasolf(-12)) / gasolf(-12)*100
+genr endperiod_waterf = (waterf - waterf(-12)) / waterf(-12)*100
+genr endperiod_electricityf = (electricityf - electricityf(-12)) / electricityf(-12)*100
 　
+genr endperiod_totalf = (composite_0 - composite_0(-12)) / composite_0(-12)*100
+
+
+
 STOP
 　
 　

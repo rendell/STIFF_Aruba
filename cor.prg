@@ -1,56 +1,56 @@
-'*****************************Creating equations******************************
+'************Creating equations******************************
 　
 genr time= @trend
 genr time2=time*time
 genr oilf2=oilf * oilf
 　
-smpl 2010m01 2017m12
+smpl 2010m01 2016m06
 equation eqn_food.ls food  c  ar(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2016m06
 equation eqn_educ.ls d(education) c  ar(1) 
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2016m06
 equation eqn_alco.ls alcohol_bev_tobacco c time ar(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2016m06
 equation eqn_tran.ls transport c time  ar(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2016m06
 equation eqn_recr.ls recr_culture c time time2 ar(1) ma(1) 
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06
 equation eqn_com.ls communications c time2 ar(1) ma(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06
 equation eqn_misc.ls misc_goods_services c time time2 ar(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06
 equation eqn_cloth.ls clothing_footwear c time time2 ar(2) ma(1) 
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06
 equation eqn_housop.ls hous_operation c time time2 ar(2) ma(1)
 　
-smpl 2008m1 2017m12
+smpl 2008m1 2018m06
 equation eqn_health.ls health c time ar(2) time2
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06
 equation eqn_hotel.ls rest_hotels c time ar(1) 
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06
 equation eqn_hous.ls housing housing(-1) ar(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m06  
 equation eqn_nonalco.ls nonalco c time ar(1)
 　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m08
 equation eqn_gasol.ls gasol_diesel c oilf oilf2
 　
 'component 'gasoline and diesel, electricity and water are forecasted manually.
 　
-'****************Second part of the model - forecasting**********************
+'*********Second part of the model - forecasting**********************
 　
-smpl 2016m09 2017m12
+smpl 2017m07 2018m12
 　
 eqn_alco.forecast alcof alcose
 group al alcof (alcof+alcose) (alcof-alcose)
@@ -104,11 +104,14 @@ eqn_nonalco.forecast nonalcof nonalcose
 group nal nonalcof (nonalcof+nonalcose) (nonalcof-nonalcose)
 nal.line
 　
+smpl 2000m12 2018m12
+　
+　
+smpl 2017m09 2018m12
 eqn_gasol.forecast gasolf gasolse
 group gas gasolf (gasolf+gasolse) (gasolf-gasolse)
 gas.line
-　
-smpl 2000m12 2017m12
+smpl 2000m12 2018m12
 　
 '********************grouping**************************
 　
@@ -120,10 +123,9 @@ model stif
 　
 stif.append composite = (weights(1)*foodf + weights(2)*alcof + weights(3)*clothf + weights(4)*housf + weights(5)*housopf + weights(6)*healthf + weights(7)*tranf + weights(8)*comf + weights(9)*recrf + weights(10)*educf + weights(11)*hotelf + weights(12)*miscf+ weights(13)*gasolf+weights(14)*waterf+weights(15)*electricityf)/10000
 　
-smpl 2000m01 2017m12
+smpl 2000m01 2018m12
 stif.solve
-　
-　
+　　
 '****************creating 12 month series****************
 'oil 
 genr oil_12month =@movav(oil,12)
@@ -175,7 +177,7 @@ genr WA_coref_12m = WA_alcof_12m + WA_clothf_12m + WA_housf_12m + WA_housopf_12m
 　
 group core_elements WA_alcof_12m WA_clothf_12m WA_housf_12m WA_housopf_12m WA_healthf_12m WA_tranf_12m WA_comf_12m WA_recrf_12m WA_educf_12m WA_hotelf_12m WA_miscf_12m
 core_elements.line
-
+　
 ' generate end of period forecasts
 genr endperiod_alcof = (alcof - alcof(-12)) / alcof(-12)*100
 genr endperiod_clothf = (clothf - clothf(-12)) / clothf(-12)*100
@@ -194,9 +196,5 @@ genr endperiod_waterf = (waterf - waterf(-12)) / waterf(-12)*100
 genr endperiod_electricityf = (electricityf - electricityf(-12)) / electricityf(-12)*100
 　
 genr endperiod_totalf = (composite_0 - composite_0(-12)) / composite_0(-12)*100
-
-
-
+　
 STOP
-　
-　

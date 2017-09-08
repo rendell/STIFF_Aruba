@@ -125,6 +125,14 @@ stif.append composite = (weights(1)*foodf + weights(2)*alcof + weights(3)*clothf
 　
 smpl 2000m01 2018m12
 stif.solve
+
+'Core inflation index grouping
+'total weight:
+' 1394.8+1263.0+81.9+625.9+741.3+235.8+706.3+891.2+83+373.7+767.0=7163.9
+
+genr core_index_f = ( weights(2)*alcof + weights(3)*clothf + weights(4)*housf + weights(5)*housopf + weights(6)*healthf + weights(7)*tranf + weights(8)*comf + weights(9)*recrf + weights(10)*educf + weights(11)*hotelf + weights(12)*miscf)/7163.9
+　
+genr core_inflationf_12month =(@movav(core_index_f ,12)-@movav(core_index_f (-12),12))/@movav(core_index_f (-12),12)*100
 　　
 '****************creating 12 month series****************
 'oil 

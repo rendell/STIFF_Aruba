@@ -44,9 +44,11 @@ smpl 2000m12 2018m06
 equation eqn_nonalco.ls nonalco c time ar(1)
 　
 smpl 2000m12 2018m08
-equation eqn_gasol.ls gasol_diesel c oilf oilf2
+equation eqn_gasol.ls d(gasol_diesel)  d(oilf(-1))
 　
-'component 'gasoline and diesel, electricity and water are forecasted manually.
+'component 'electricity and water are forecasted manually.
+' gasoline is forecasted using the Brent Europe oil price forecast. 
+'Found unit root for both depedenent and independent series so they are first differenced. 
 　
 '*********Second part of the model - forecasting**********************
 　
@@ -125,15 +127,19 @@ stif.append composite = (weights(1)*foodf + weights(2)*alcof + weights(3)*clothf
 　
 smpl 2000m01 2018m12
 stif.solve
-
+　
 'Core inflation index grouping
 'total weight:
 ' 1394.8+1263.0+81.9+625.9+741.3+235.8+706.3+891.2+83+373.7+767.0=7163.9
-
+　
 genr core_index_f = ( weights(2)*alcof + weights(3)*clothf + weights(4)*housf + weights(5)*housopf + weights(6)*healthf + weights(7)*tranf + weights(8)*comf + weights(9)*recrf + weights(10)*educf + weights(11)*hotelf + weights(12)*miscf)/7163.9
 　
+genr index_ex_energy_f =(weights(1)*foodf + weights(2)*alcof + weights(3)*clothf + weights(4)*housf + weights(5)*housopf + weights(6)*healthf + weights(7)*tranf + weights(8)*comf + weights(9)*recrf + weights(10)*educf + weights(11)*hotelf + weights(12)*miscf)/(10000-552.3-437.3-721.0)
+　
 genr core_inflationf_12month =(@movav(core_index_f ,12)-@movav(core_index_f (-12),12))/@movav(core_index_f (-12),12)*100
-　　
+　
+genr inf_ex_energy_f_12m =(@movav(index_ex_energy_f ,12)-@movav(index_ex_energy_f  (-12),12))/@movav(index_ex_energy_f (-12),12)*100
+　
 '****************creating 12 month series****************
 'oil 
 genr oil_12month =@movav(oil,12)
@@ -200,9 +206,12 @@ genr endperiod_hotelf= (hotelf- hotelf(-12)) / hotelf(-12)*100
 genr endperiod_miscf = (miscf - miscf(-12)) / miscf(-12)*100
 genr endperiod_foodf= (foodf - foodf(-12)) / foodf(-12)*100
 genr endperiod_gasolf = (gasolf - gasolf(-12)) / gasolf(-12)*100
+　
 genr endperiod_waterf = (waterf - waterf(-12)) / waterf(-12)*100
 genr endperiod_electricityf = (electricityf - electricityf(-12)) / electricityf(-12)*100
 　
 genr endperiod_totalf = (composite_0 - composite_0(-12)) / composite_0(-12)*100
 　
+　
 STOP
+　

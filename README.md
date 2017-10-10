@@ -26,6 +26,8 @@ In essence, most variables are forecast using ARIMA.
 Water and electricity are forecasted exogenously based on information gathered through comversations with officials of the water and electricity companies.
 Gasoline is forecasted through OLS with the independent variable beeing Brent oil price forecasts.
 
+The model also creates various inflation measures, including end of period inflation and 12-minth inflation per component. 
+
 Further methodological reference consult the Bank of England STIFF model manuals.
 
 
